@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.androidapp.ui.theme.AndroidAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,42 +30,50 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AndroidAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                TodoView()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxWidth()
-            .size(300.dp)
 
-    ) {
-        Text(
-            text = "Hello $name!",
-            modifier = modifier
-        )
-        Text(
-            text = "More text here!"
-        )
-    }
-
-}
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
-    AndroidAppTheme {
-        Greeting("Android")
+fun TodoView() {
+    val todos = remember {
+        mutableStateListOf(
+            Todo("Finish Android project"),
+            Todo("Study Compose")
+        )
+    }
+
+    Column (
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+
+    ) {
+        Text(
+            text = "My list of Todos!",
+            fontSize = 20.sp,
+
+        )
+
+        if (todos.isEmpty()){
+            Text (
+                text = "No todos yet, add your first!",
+                modifier = Modifier
+                    .padding(10.dp)
+            )
+        } else {
+            for (todo in todos) {
+                Text(
+                    text = todo.todo
+                )
+            }
+        }
+
     }
 }
