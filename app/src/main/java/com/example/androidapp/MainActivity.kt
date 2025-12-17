@@ -7,11 +7,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -66,35 +71,61 @@ fun AddTodoView(
     todos: MutableList<Todo>,
     onGoList: () -> Unit) {
     var newTodo by remember {mutableStateOf("")}
-
     Column(
         modifier = Modifier
-            .padding(10.dp),
-
+            .fillMaxSize()
+            . padding(10.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Add a new TODO!")
-        TextField(
-            value = newTodo,
-            onValueChange = {newTodo = it},
-            label = {Text("Input a new TODO:")}
+        Text("Add a new Todo!",
+            fontSize = 15.sp)
+        Spacer(
+            modifier = Modifier
+                .height(20.dp)
         )
-        Button(
-            onClick = {
-                todos.add(Todo(newTodo))
-                newTodo = ""
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                value = newTodo,
+                onValueChange = {newTodo = it},
+                label = {Text("Input a new TODO:")},
+                modifier = Modifier
+                    .weight(1f)
+            )
+            Spacer(
+                modifier = Modifier
+                    .width(10.dp)
+            )
+            Button(
+                onClick = {
+                    todos.add(Todo(newTodo))
+                    newTodo = ""
+                }
+            )
+            {
+                Text("Add!")
             }
-        )
-        {
-            Text("Add!")
+
         }
+
         Button(
-            onClick = onGoList
+            onClick = onGoList,
+            modifier = Modifier
+                .padding(top = 10.dp)
         ) {
             Text("Go to List of todos!")
         }
     }
+
 }
+
 
 @Composable
 fun TodoListView(
@@ -103,23 +134,59 @@ fun TodoListView(
 ) {
     Column(
         modifier = Modifier
+            .fillMaxSize()
             .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("My Todo List")
+        Text("My Todo List",
+            modifier = Modifier
+                .padding(bottom = 20.dp)
+        )
 
         Button(
-            onClick = onBack
+            onClick = onBack,
+            modifier = Modifier
+                .padding(bottom = 20.dp)
         ) {
             Text("Go back")
         }
-    }
 
-    if (todos.isEmpty()) {
-        Text("No todos yet!")
-    } else {
-        for (todo in todos) {
-            Text(todo.todo)
+        if (todos.isEmpty()) {
+            Text("No todos yet!")
+        } else {
+            for ((index, todo) in todos.withIndex()) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                        .padding(bottom = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = todo.done,
+                        onCheckedChange = {isChecked ->
+                            todos[index] = todo.copy(done = isChecked)
+                        }
+                    )
+
+                    Text(
+                        text = todo.todo,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(10.dp)
+                    )
+
+                    Button(
+                        onClick = {
+                            todos.removeAt(index)
+                        }
+                    ) {
+                        Text("Delete")
+                    }
+                }
+            }
         }
     }
+
+
 }
